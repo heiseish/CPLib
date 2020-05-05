@@ -19,7 +19,18 @@ Node combine(Node lhs, Node rhs) {
     temp.y = max(lhs.y, rhs.y);
     return temp;
 }
-void push(int v, int l, int r) {
+
+auto build(int v, int l, int r) -> void {
+    if (l == r) {
+        t[v] = a[v];
+        return;
+    }
+    int mid = (l + r) >> 1;
+    build(v << 1, l , mid);
+    build(v << 1 | 1, mid + 1, r);  
+    t[v] = combine(t[v << 1], t[v << 1 | 1]); 
+}
+auto push(int v, int l, int r) -> void{
     t[v].x += lazy[v];
     t[v].y += lazy[v];
     if (l < r) {

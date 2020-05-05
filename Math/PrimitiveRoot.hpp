@@ -1,3 +1,4 @@
+
 /**
 In modular arithmetic, a number g is called a primitive root modulo n 
 if every number coprime to n is congruent to a power of g modulo n. 
@@ -11,8 +12,6 @@ k is then called the index or discrete logarithm of a to the base
 g modulo n. g is also called the generator of the multiplicative 
 group of integers modulo n.
 */
-#include <vector>
-
 class PrimitiveRoot {
 private:
 	int powmod (int a, int b, int p) {

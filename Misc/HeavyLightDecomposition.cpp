@@ -1,3 +1,4 @@
+/**
 Heavy light decomposition.
 Bài toán
 Cho một cây N đỉnh, thực hiện các thao tác sau
@@ -8,6 +9,7 @@ bộ nhớ: O(n)
 truy vấn 1 và 2: O(logn)
 
 Code này của Nguyễn Tiến Trung Kiên
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>

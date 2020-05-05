@@ -1,13 +1,16 @@
-#include <map>
-#include <utility>
-#include <cmath>
+
+
 /**
 Discrete Logarithmic prblem
 Baby step - giant step O(sqrt(m) * log(m))
 Solve a^x≡b(mod m),
 only when m is prime
 */
-class BabyStepGiantStep {
+template <bool IsPrime>
+class BabyStepGiantStep;
+
+template <>
+class BabyStepGiantStep<true> {
 private:
 	int a, b, m;
 	int solve(int a, int b, int m) {
@@ -40,8 +43,8 @@ public:
 	}
 }
 
-
-class BabyStepGiantStepNotPrime {
+template <>
+class BabyStepGiantStep<false> {
 private:
 	int a, b, m;
 	int powmod(long long x, long long p, long long m) {
@@ -95,7 +98,7 @@ private:
 	}
 
 public:
-	BabyStepGiantStepNotPrime(int _a, int _b, int _m) : a(_a), b(_b), m(_m) { }
+	BabyStepGiantStep(int _a, int _b, int _m) : a(_a), b(_b), m(_m) { }
 	int solve(){
 		return solve(a, b, m);
 	}

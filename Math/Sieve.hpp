@@ -1,5 +1,3 @@
-#include <bitset>
-#include <vector>
 
 class Sieve {
 private:
@@ -35,7 +33,7 @@ public:
 			}   
 			PF = primes[++PF_idx];              
 		}
-		if (N != 1 && ) factors.push_back(N);
+		if (N != 1) factors.push_back(N);
 		return factors;  
 	}
 
@@ -117,4 +115,4 @@ public:
 		}
 		return (N != 1) ? ans - ans/N : ans;                            // last factor
 	}
-} 
+};
