@@ -1,0 +1,3 @@
+[submodule "cpbook-code"]
+	path = cpbook-code
+	url = git@github.com:stevenhalim/cpbook-code.git
