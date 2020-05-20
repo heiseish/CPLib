@@ -1,4 +1,98 @@
 #include <vector>
+
+using namespace std;
+/**
+ * Hungarian algorithm
+The assignment problem has two equivalent statements:
+
+Given a square matrix A[1..N,1..N], you need to select N elements in it so that exactly one element is selected in 
+each row and column, and the sum of the values of these elements is the smallest.
+There are N orders and N machines. The cost of manufacturing on each machine is known for each order. 
+Only one order can be performed on each machine. It is required to assign all orders to the machines so that the total cost is minimized.
+*/
+vector<long> assignment(vector<vector<long>>& a) {
+	const static long INF = 1e11;
+    long n = a.size();
+    long m = n * 2 + 2;
+    vector<vector<long>> f(m, vector<long>(m));
+    long s = m - 2, t = m - 1;
+    long cost = 0;
+    while (true) {
+        vector<long> dist(m, INF);
+        vector<long> p(m);
+        vector<bool> inq(m, false);
+        queue<long> q;
+        dist[s] = 0;
+        p[s] = -1;
+        q.emplace(s);
+        while (!q.empty()) {
+            long v = q.front();
+            q.pop();
+            inq[v] = false;
+            if (v == s) {
+                for (long i = 0; i < n; ++i) {
+                    if (f[s][i] == 0) {
+                        dist[i] = 0;
+                        p[i] = s;
+                        inq[i] = true;
+                        q.push(i);
+                    }
+                }
+            } else {
+                if (v < n) {
+                    for (long j = n; j < n + n; ++j) {
+                        if (f[v][j] < 1 && dist[j] > dist[v] + a[v][j - n]) {
+                            dist[j] = dist[v] + a[v][j - n];
+                            p[j] = v;
+                            if (!inq[j]) {
+                                q.push(j);
+                                inq[j] = true;
+                            }
+                        }
+                    }
+                } else {
+                    for (long j = 0; j < n; ++j) {
+                        if (f[v][j] < 0 && dist[j] > dist[v] - a[j][v - n]) {
+                            dist[j] = dist[v] - a[j][v - n];
+                            p[j] = v;
+                            if (!inq[j]) {
+                                q.push(j);
+                                inq[j] = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        long curcost = INF;
+        for (long i = n; i < n + n; ++i) {
+            if (f[i][t] == 0 && dist[i] < curcost) {
+                curcost = dist[i];
+                p[t] = i;
+            }
+        }
+        if (curcost == INF)
+            break;
+        cost += curcost;
+        for (long cur = t; cur != -1; cur = p[cur]) {
+            long prev = p[cur];
+            if (prev != -1)
+                f[cur][prev] = -(f[prev][cur] = 1);
+        }
+    }
+
+    vector<long> answer(n);
+    for (long i = 0; i < n; ++i) {
+        for (long j = 0; j < n; ++j) {
+            if (f[i][j + n] == 1)
+                answer[i] = j;
+        }
+    }
+    return answer;
+}
+
+
 class MinCostMaxFlow {
 private:
 	struct Edge {
