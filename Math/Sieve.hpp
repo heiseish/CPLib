@@ -94,7 +94,7 @@ public:
 
 
 	void precomputeEulerPhi(int _max_eulerphi) {
-		eulerPhi.assign(_max_eulerphi, 0)
+		eulerPhi.assign(_max_eulerphi, 0);
 		for(int i = 1; i < _max_eulerphi; ++i) eulerPhi[i] = i;
 		for(int i = 2; i < _max_eulerphi; ++i) 
 			if (eulerPhi[i] == i)

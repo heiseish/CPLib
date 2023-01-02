@@ -3,12 +3,16 @@ If comrades that you trust gather around you, hope can take physical form and be
 */
 #include <bits/stdc++.h>
 using namespace std;
-/**
-(▀̿Ĺ̯▀̿ ̿) (ง ͠° ͟ل͜ ͡°)ง
-*/
+
+auto solve() -> void {
+    
+}
 auto main() -> int {
     ios_base::sync_with_stdio(false); cin.tie(0);
-
+    int tc; cin >> tc;
+    while (tc--) {
+        solve();
+    }
     
     return 0;
 }

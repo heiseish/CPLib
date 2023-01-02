@@ -1,13 +1,15 @@
-#include <vector>
-#include <string>
+#include <bits/stdc++.h>
+using namespace std;
+
+
 class Trie {
 private:
 	int ALPHA = 26;
 	int root = 0;
 public:
-	std::vector<std::vector<int> > trie;
-	std::vector<int> occur;
-	std::vector<int> par;
+	vector<vector<int> > trie;
+	vector<int> occur;
+	vector<int> par;
 	Trie(int dict=26) : ALPHA(dict) {
 		trie.emplace_back(ALPHA, -1);
 		par.emplace_back(-1);

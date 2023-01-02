@@ -1,6 +1,16 @@
 #include "Modular.hpp"
 #include <vector>
 
+// RAndom
+auto random_address = [] { char *p = new char; delete p; return uint64_t(p); };
+ 
+const uint64_t SEED = chrono::steady_clock::now().time_since_epoch().count() * (random_address() | 1);
+mt19937_64 rng(SEED);
+
+
+int64_t ceil_div(int64_t a, int64_t b) {
+    return (a + b - 1) / b;
+}
 
 const int N = 2e5 + 7;
 int f[N], inv[N], ans[N];
@@ -71,8 +81,8 @@ void precomputeNChooseR(int maxn) {
     }
 }
 
-template <class T>
-T fastpow(T a, int b) {
+
+auto fastpow(ll a, ll b) -> ll {
     T ret = 1;
     while (b) {
         if (b & 1) {
@@ -163,6 +173,37 @@ pair<long long, long long> LinearDiophantine(long long a, long long b, long long
     }
     return {x, y};
 }
+
+// LinearDiophantine alternative
+ll gcd(ll a, ll b, ll& x, ll& y) {
+    if (b == 0) {
+        x = 1;
+        y = 0;
+        return a;
+    }
+    ll x1, y1;
+    ll d = gcd(b, a % b, x1, y1);
+    x = y1;
+    y = x1 - y1 * (a / b);
+    return d;
+}
+
+bool find_any_solution(ll a, ll b, ll c, ll &x0, ll &y0, ll &g) {
+    g = gcd(abs(a), abs(b), x0, y0);
+    if (c % g) {
+        return false;
+    }
+
+    x0 *= c / g;
+    y0 *= c / g;
+    if (a < 0) x0 = -x0;
+    if (b < 0) y0 = -y0;
+    return true;
+}
+
+// -------------------------------------
+
+
 
 long long mod_inverse(long long b, long long m) {
     long long x, y;

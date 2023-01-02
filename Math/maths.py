@@ -29,7 +29,7 @@ def chineseRemainderTheorem(a, p, b, q):
 	return ans
 
 def choose(n, k):
-    if k == 0 
+    if k == 0:
 		return 1
     return (n * choose(n - 1, k - 1)) // k
 
