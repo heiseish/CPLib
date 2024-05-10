@@ -33,7 +33,7 @@ public:
         int pos = 0;
         int LOGN = log2(n) + 1;
         for(int i=LOGN; i>=0; i--) {
-            if(pos + (1 << i) < bound and sum + ft[pos + (1 << i)] >= v) {
+            if(pos + (1 << i) < bound && sum + ft[pos + (1 << i)] >= v) {
                 sum += ft[pos + (1 << i)];
                 pos += (1 << i);
             }
