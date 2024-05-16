@@ -1,20 +1,21 @@
-mod fenwich {
+mod fw {
+    type FT = i64;
     macro_rules! lsone {
         ($S:tt) => {
-            (($S as i32) & -($S as i32))
+            (($S as FT) & -($S as FT))
         };
     }
     pub struct FenwichTree {
-        ft: Vec<u32>,
+        ft: Vec<i64>,
         n: usize,
     }
     impl FenwichTree {
         //! Input has to be 1-based indexing
-        pub fn new(f: &[u8]) -> Self {
+        pub fn from_arr(f: &[FT]) -> Self {
             let n = f.len() - 1;
-            let mut ft = vec![0u32; n + 1];
+            let mut ft = vec![0; n + 1];
             for i in 1..=n {
-                ft[i] += f[i] as u32;
+                ft[i] += f[i];
                 let j = i + lsone!(i) as usize;
                 if j <= n {
                     ft[j] += ft[i];
@@ -24,7 +25,7 @@ mod fenwich {
         }
 
         #[inline(always)]
-        pub fn rsq_s(&self, mut j: i32) -> u32 {
+        pub fn rsq_s(&self, mut j: FT) -> FT {
             let mut sum = 0;
             while j > 0 {
                 sum += self.ft[j as usize];
@@ -34,12 +35,12 @@ mod fenwich {
         }
 
         #[inline(always)]
-        pub fn rsq(&self, i: i32, j: i32) -> u32 {
+        pub fn rsq(&self, i: FT, j: FT) -> FT {
             self.rsq_s(j) - self.rsq_s(i - 1)
         }
 
         #[inline(always)]
-        pub fn update(&mut self, mut i: usize, v: u32) {
+        pub fn update(&mut self, mut i: usize, v: FT) {
             loop {
                 if i > self.n {
                     break;
@@ -50,7 +51,7 @@ mod fenwich {
         }
 
         #[inline(always)]
-        pub fn bit_search(&self, v: u32, bound: usize) -> usize {
+        pub fn bit_search(&self, v: FT, bound: usize) -> usize {
             let mut sum = 0;
             let mut pos = 0;
             let logn = (self.n as f32).log2().floor() as usize + 1;

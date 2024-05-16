@@ -1,26 +1,6 @@
 pub struct LinearDophantine;
 const MOD: i64 = 1_000_000_007;
 
-trait Lsone {
-    fn lsone(self) -> Self;
-}
-
-impl Lsone for i64 {
-    fn lsone(self) -> Self {
-        self & -self
-    }
-}
-impl Lsone for i32 {
-    fn lsone(self) -> Self {
-        self & -self
-    }
-}
-impl Lsone for usize {
-    fn lsone(self) -> Self {
-        ((self as i64) & -(self as i64)) as Self
-    }
-}
-
 fn init_inv_mod<const N: usize>() -> [i64; N] {
     let mut inv = [0i64; N];
     inv[0] = 1;
@@ -44,7 +24,7 @@ fn add(mut a: i64, mut b: i64) -> i64 {
 }
 
 fn mult(a: i64, b: i64) -> i64 {
-    (a * b) % MOD
+    ((a % MOD) * (b % MOD)) % MOD
 }
 
 fn bin_pow(mut a: i64, mut b: i64) -> i64 {
@@ -60,6 +40,25 @@ fn bin_pow(mut a: i64, mut b: i64) -> i64 {
     ret
 }
 
+trait Lsone {
+    fn lsone(self) -> Self;
+}
+
+impl Lsone for i64 {
+    fn lsone(self) -> Self {
+        self & -self
+    }
+}
+impl Lsone for i32 {
+    fn lsone(self) -> Self {
+        self & -self
+    }
+}
+impl Lsone for usize {
+    fn lsone(self) -> Self {
+        ((self as i64) & -(self as i64)) as Self
+    }
+}
 impl LinearDophantine {
     fn gcd(&self, a: i64, b: i64, x: &mut i64, y: &mut i64) -> i64 {
         if b == 0 {
