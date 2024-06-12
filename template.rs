@@ -10,6 +10,7 @@ use std::f32::consts::*;
 use std::fs::File;
 use std::io::*;
 use std::iter::FromIterator;
+use std::ops::Bound::*;
 use std::ops::*;
 
 fn solve<R: BufRead, W: Write>(mut input: InputReader<R>, mut output: W) {

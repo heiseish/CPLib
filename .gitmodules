@@ -7,3 +7,6 @@
 [submodule "ac-library"]
 	path = ac-library
 	url = git@github.com:atcoder/ac-library.git
+[submodule "rust-algorithms"]
+	path = rust-algorithms
+	url = git@github.com:EbTech/rust-algorithms.git

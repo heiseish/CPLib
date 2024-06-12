@@ -1,3 +1,16 @@
+fn compress(mut a: Vec<i64>, mi: Option<usize>) -> HashMap<i64, usize> {
+    let mut mi = mi.unwrap_or(0);
+    let mut ret = HashMap::new();
+    a.sort();
+    for b in a {
+        if ret.contains_key(&b) {
+            continue;
+        }
+        ret.insert(b, mi);
+        mi += 1;
+    }
+    ret
+}
 mod fw {
     type FT = i64;
     macro_rules! lsone {
@@ -10,7 +23,12 @@ mod fw {
         n: usize,
     }
     impl FenwichTree {
-        //! Input has to be 1-based indexing
+        pub fn new(n: usize) -> Self {
+            let ft = vec![0; n + 1];
+            Self { ft, n }
+        }
+
+        // Input has to be 1-based indexing
         pub fn from_arr(f: &[FT]) -> Self {
             let n = f.len() - 1;
             let mut ft = vec![0; n + 1];

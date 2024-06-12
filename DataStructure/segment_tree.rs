@@ -10,6 +10,19 @@ use std::f32::consts::*;
 use std::fs::File;
 use std::io::*;
 use std::iter::FromIterator;
+fn compress(mut a: Vec<i64>, mi: Option<usize>) -> HashMap<i64, usize> {
+    let mut mi = mi.unwrap_or(0);
+    let mut ret = HashMap::new();
+    a.sort();
+    for b in a {
+        if ret.contains_key(&b) {
+            continue;
+        }
+        ret.insert(b, mi);
+        mi += 1;
+    }
+    ret
+}
 
 mod st {
     use std::ops::{Add, AddAssign};
@@ -314,7 +327,7 @@ mod st {
 }
 
 mod lazy_st {
-    type modint = crate::mint::MInt<998244353>;
+    use crate::mint;
     #[derive(Default, Clone, Copy)]
     pub struct Node {
         pub val: modint,
@@ -539,6 +552,16 @@ mod lazy_st {
         }
     }
 }
+use crate::lazy_st::*;
+// let mut lazy_segtree = LazySegmentTree::build(
+//     n,
+//     &a,
+//     f_combine_node,
+//     f_invalid_node,
+//     f_map_act,
+//     f_compose_act,
+// );
+
 fn solve<R: BufRead, W: Write>(mut input: InputReader<R>, mut output: W) {
     use lazy_st::*;
 

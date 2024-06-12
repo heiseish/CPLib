@@ -1,7 +1,9 @@
-mod dsu {
+mod uf {
+    #[derive(Clone, Debug)]
     pub struct UnionFind {
         d: Vec<usize>,
         sz: Vec<usize>,
+        cc: usize,
     }
 
     impl UnionFind {
@@ -9,6 +11,7 @@ mod dsu {
             Self {
                 d: (0..=n).collect::<Vec<_>>(),
                 sz: vec![1; n + 1],
+                cc: n,
             }
         }
 
@@ -25,6 +28,10 @@ mod dsu {
             self.sz[nxt]
         }
 
+        pub fn num_cc(&self) -> usize {
+            self.cc
+        }
+
         pub fn join(&mut self, a: usize, b: usize) -> bool {
             let a = self.find(a);
             let b = self.find(b);
@@ -32,6 +39,7 @@ mod dsu {
                 return false;
             }
             self.sz[b] += self.sz[a];
+            self.cc -= 1;
             self.d[a] = b;
             true
         }
