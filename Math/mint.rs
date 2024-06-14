@@ -17,7 +17,7 @@ mod modular {
         }
     }
 
-    fn add<const MOD: i64>(mut a: i64, mut b: i64) -> i64 {
+    const fn add<const MOD: i64>(mut a: i64, mut b: i64) -> i64 {
         if a < 0 {
             a += MOD;
         }
@@ -29,11 +29,11 @@ mod modular {
         (a + b) % MOD
     }
 
-    fn mult<const MOD: i64>(a: i64, b: i64) -> i64 {
+    const fn mult<const MOD: i64>(a: i64, b: i64) -> i64 {
         ((a % MOD) * (b % MOD)) % MOD
     }
 
-    fn bin_pow<const MOD: i64>(mut a: i64, mut b: i64) -> i64 {
+    const fn bin_pow<const MOD: i64>(mut a: i64, mut b: i64) -> i64 {
         a %= MOD;
         let mut ret = 1;
         while b > 0 {
@@ -46,7 +46,7 @@ mod modular {
         ret
     }
 
-    fn bin_pow_u128<const MOD: i64>(mut a: i64, mut b: u128) -> i64 {
+    const fn bin_pow_u128<const MOD: i64>(mut a: i64, mut b: u128) -> i64 {
         a %= MOD;
         let mut ret = 1;
         while b > 0 {
@@ -63,20 +63,63 @@ mod modular {
         pub const ZERO: MInt<MOD> = MInt(0);
         pub const ONE: MInt<MOD> = MInt(1);
 
-        pub fn new(value: i64) -> Self {
+        pub const fn new(value: i64) -> Self {
             Self(value % MOD)
         }
 
-        pub fn pow(self, exp: MInt<MOD>) -> Self {
+        pub const fn pow(self, exp: MInt<MOD>) -> Self {
             Self::new(bin_pow::<MOD>(self.0, exp.0))
         }
 
-        pub fn pow_u128(self, exp: u128) -> Self {
+        pub const fn pow_u128(self, exp: u128) -> Self {
             Self::new(bin_pow_u128::<MOD>(self.0, exp))
         }
 
-        pub fn inv(self) -> Self {
+        pub const fn inv(self) -> Self {
             self.pow(Self::new(MOD - 2))
+        }
+        pub fn init_inv_mod(n: usize) -> Vec<MInt<MOD>> {
+            let mut inv = vec![0i64; n];
+            inv[0] = 1;
+            inv[1] = 1;
+            for i in 2..n {
+                inv[i] = mult::<MOD>(
+                    add::<MOD>(MOD, -MOD / i as i64),
+                    inv[(MOD % i as i64) as usize],
+                );
+            }
+            inv.into_iter().map(|x| x.into()).collect()
+        }
+
+        pub fn init_fact_mod(n: usize) -> Vec<MInt<MOD>> {
+            let mut fact = vec![MInt::<MOD>::new(1); n];
+            for i in 1..n {
+                fact[i] = fact[i - 1] * i as i64;
+            }
+            fact
+        }
+
+        pub fn init_ifact_mod(n: usize, fact: &[MInt<MOD>]) -> Vec<MInt<MOD>> {
+            let mut ifact = vec![MInt::<MOD>::new(0); n];
+            ifact[n - 1] = fact[n - 1].inv();
+            for i in (0..(n - 1)).rev() {
+                ifact[i] = ifact[i + 1] * (i + 1) as i64;
+            }
+            ifact
+        }
+
+        // init (fact, ifact)
+        pub fn init_fact(n: usize) -> (Vec<MInt<MOD>>, Vec<MInt<MOD>>) {
+            let mut fact = vec![MInt::<MOD>::new(1); n];
+            let mut ifact = vec![MInt::<MOD>::new(0); n];
+            for i in 1..n {
+                fact[i] = fact[i - 1] * i as i64;
+            }
+            ifact[n - 1] = fact[n - 1].inv();
+            for i in (0..(n - 1)).rev() {
+                ifact[i] = ifact[i + 1] * (i + 1) as i64;
+            }
+            (fact, ifact)
         }
     }
 
@@ -311,36 +354,6 @@ mod modular {
         fn from(val: MInt<MOD>) -> Self {
             val.0 as usize
         }
-    }
-
-    pub fn init_inv_mod<const MOD: i64>(n: usize) -> Vec<MInt<MOD>> {
-        let mut inv = vec![0i64; n];
-        inv[0] = 1;
-        inv[1] = 1;
-        for i in 2..n {
-            inv[i] = mult::<MOD>(
-                add::<MOD>(MOD, -MOD / i as i64),
-                inv[(MOD % i as i64) as usize],
-            );
-        }
-        inv.into_iter().map(|x| x.into()).collect()
-    }
-
-    pub fn init_fact_mod<const MOD: i64>(n: usize) -> Vec<MInt<MOD>> {
-        let mut fact = vec![MInt::<MOD>::new(1); n];
-        for i in 1..n {
-            fact[i] = fact[i - 1] * i as i64;
-        }
-        fact
-    }
-
-    pub fn init_ifact_mod<const MOD: i64>(n: usize, fact: &[MInt<MOD>]) -> Vec<MInt<MOD>> {
-        let mut ifact = vec![MInt::<MOD>::new(0); n];
-        ifact[n - 1] = fact[n - 1].inv();
-        for i in (0..(n - 1)).rev() {
-            ifact[i] = ifact[i + 1] * (i + 1) as i64;
-        }
-        ifact
     }
 }
 pub type mint = modular::MInt<998244353>;

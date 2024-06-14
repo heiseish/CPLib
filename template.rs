@@ -18,6 +18,7 @@ fn solve<R: BufRead, W: Write>(mut input: InputReader<R>, mut output: W) {
     'outer: for _ in 0..(input.next::<usize>()) {}
 }
 
+//#region
 fn main() {
     let input = InputReader::new();
     let writer = BufWriter::new(stdout().lock());
@@ -251,3 +252,5 @@ impl_sign_from_input! {u64, i64}
 impl_floating_from_input! {f32, f64}
 impl_readable_from! { u32, [u16, u8, usize] }
 impl_readable_from! { i32, [i16, i8, isize] }
+
+//#endregion
