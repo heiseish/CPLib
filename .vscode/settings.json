@@ -49,5 +49,6 @@
     "streambuf": "cpp",
     "cinttypes": "cpp",
     "typeinfo": "cpp"
-}
+},
+"cmake.sourceDirectory": "/home/heiseish/Projects/CPLib/ac-library/test/benchmark"
 }

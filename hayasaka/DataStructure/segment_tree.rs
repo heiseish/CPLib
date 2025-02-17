@@ -13,8 +13,7 @@ use std::iter::FromIterator;
 fn compress(mut a: Vec<i64>, mi: Option<usize>) -> HashMap<i64, usize> {
     let mut mi = mi.unwrap_or(0);
     let mut ret = HashMap::new();
-    a.sort();
-    for b in a {
+    for b in a.into_iter().collect::<BTreeSet<_>>().into_iter() {
         if ret.contains_key(&b) {
             continue;
         }
@@ -24,8 +23,27 @@ fn compress(mut a: Vec<i64>, mi: Option<usize>) -> HashMap<i64, usize> {
     ret
 }
 
-mod st {
+#[macro_use]
+mod ast {
     use std::ops::{Add, AddAssign};
+
+    macro_rules! new_max_tree {
+        ($n: tt) => {
+            SegmentTreeRARQ::new($n, |&a: &i64, &b: &i64| a.max(b), || 0)
+        };
+        ($n: tt, $a: expr) => {
+            SegmentTreeRARQ::build($n, $a, |&a: &i64, &b: &i64| a.max(b), || 0)
+        };
+    }
+
+    macro_rules! new_min_tree {
+        ($n: tt) => {
+            SegmentTreeRARQ::new($n, |&a: &i64, &b: &i64| a.min(b), || 0)
+        };
+        ($n: tt, $a: expr) => {
+            SegmentTreeRARQ::build($n, $a, |&a: &i64, &b: &i64| a.min(b), || 0)
+        };
+    }
 
     // 1-indexed
     // Query on range using FC function
@@ -67,7 +85,7 @@ mod st {
         // a is 1-indexed too
         pub fn build(n: usize, a: &[D], fc: FC, fnull: FN) -> Self {
             let sz = n + 3;
-            let lazy = vec![false; sz << 2];
+            let lazy = vec![D::default(); n << 2];
             let mut t = vec![D::default(); sz << 2];
 
             fn build_inner<D, FC>(v: usize, l: usize, r: usize, a: &[D], t: &mut [D], fc: &FC)
@@ -174,6 +192,30 @@ mod st {
             let fnull = self.fnull.clone();
             get_inner(self, 1, 1, self.n, x, y, &fc, &fnull)
         }
+    }
+}
+use ast::*;
+
+#[macro_use]
+mod mst {
+    use std::ops::{Add, AddAssign};
+
+    macro_rules! new_max_tree {
+        ($n: tt) => {
+            SegmentTreeRARQ::new($n, |&a: &i64, &b: &i64| a.max(b), || 0)
+        };
+        ($n: tt, $a: expr) => {
+            SegmentTreeRARQ::build($n, $a, |&a: &i64, &b: &i64| a.max(b), || 0)
+        };
+    }
+
+    macro_rules! new_min_tree {
+        ($n: tt) => {
+            SegmentTreeRARQ::new($n, |&a: &i64, &b: &i64| a.min(b), || 0)
+        };
+        ($n: tt, $a: expr) => {
+            SegmentTreeRARQ::build($n, $a, |&a: &i64, &b: &i64| a.min(b), || 0)
+        };
     }
 
     // 1-indexed
@@ -325,12 +367,13 @@ mod st {
         }
     }
 }
+use mst::*;
 
+#[macro_use]
 mod lazy_st {
-    use crate::mint;
     #[derive(Default, Clone, Copy)]
     pub struct Node {
-        pub val: modint,
+        pub val: i64,
         pub siz: i64,
     }
 
@@ -347,8 +390,8 @@ mod lazy_st {
 
     #[derive(Clone, Copy)]
     pub struct Act {
-        pub b: modint,
-        pub c: modint,
+        pub b: i64,
+        pub c: i64,
     }
 
     impl Default for Act {
@@ -408,9 +451,9 @@ mod lazy_st {
         FCA: FnOnce(&A, &A) -> A + Copy,
     {
         pub fn new(n: usize, fcombine: FC, fnull: FN, fmap: FM, fcompose: FCA) -> Self {
-            let n = n + 3;
-            let lazy = vec![A::default(); n << 2];
-            let t = vec![D::default(); n << 2];
+            let sz = n + 3;
+            let lazy = vec![A::default(); sz << 2];
+            let t = vec![D::default(); sz << 2];
             Self {
                 n,
                 lazy,
@@ -551,16 +594,25 @@ mod lazy_st {
             )
         }
     }
+
+    macro_rules! new_tree {
+        ($n: tt) => {
+            LazySegmentTree::new($n, f_combine_node, f_invalid_node, f_map_act, f_compose_act)
+        };
+        ($n: tt, $a: expr) => {
+            LazySegmentTree::build(
+                $n,
+                $a,
+                f_combine_node,
+                f_invalid_node,
+                f_map_act,
+                f_compose_act,
+            )
+        };
+    }
 }
+
 use crate::lazy_st::*;
-// let mut lazy_segtree = LazySegmentTree::build(
-//     n,
-//     &a,
-//     f_combine_node,
-//     f_invalid_node,
-//     f_map_act,
-//     f_compose_act,
-// );
 
 fn solve<R: BufRead, W: Write>(mut input: InputReader<R>, mut output: W) {
     use lazy_st::*;

@@ -10,3 +10,9 @@
 [submodule "rust-algorithms"]
 	path = rust-algorithms
 	url = git@github.com:EbTech/rust-algorithms.git
+[submodule "library-rs"]
+	path = library-rs
+	url = git@github.com:rsk0315/library-rs.git
+[submodule "tourist_algo"]
+	path = tourist_algo
+	url = git@github.com:the-tourist/algo.git

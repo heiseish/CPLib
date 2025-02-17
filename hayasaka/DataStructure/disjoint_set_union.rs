@@ -23,6 +23,10 @@ mod uf {
             self.d[index]
         }
 
+        pub fn is_root(&self, index: usize) -> bool {
+            self.d[index] == index
+        }
+
         pub fn len(&mut self, index: usize) -> usize {
             let nxt = self.find(index);
             self.sz[nxt]

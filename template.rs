@@ -13,9 +13,9 @@ use std::iter::FromIterator;
 use std::ops::Bound::*;
 use std::ops::*;
 
-fn solve<R: BufRead, W: Write>(mut input: InputReader<R>, mut output: W) {
+fn solve<R: BufRead, W: Write>(mut cin: InputReader<R>, mut cout: W) {
     // read in int/float
-    'outer: for _ in 0..(input.next::<usize>()) {}
+    'outer: for tc in 0..(cin.n::<usize>()) {}
 }
 
 //#region
@@ -54,18 +54,39 @@ impl<R: BufRead> InputReader<R> {
         }
     }
     #[inline(always)]
-    pub fn next<T: InputReadable>(&mut self) -> T {
+    pub fn n<T: InputReadable>(&mut self) -> T {
         T::from_input(self)
     }
 
-    pub fn read_line(&mut self, buf: &mut String) {
+    #[inline(always)]
+    pub fn str(&mut self, insert_dummy: bool) -> Vec<char> {
+        let mut s = vec![];
+        if insert_dummy {
+            s.push('_');
+        }
         self.consume_until(|c| c.is_ascii_graphic());
         while self.has_more() && self.peek().is_ascii_graphic() {
-            buf.push(self.peek());
+            s.push(self.peek());
             self.consume();
         }
         self.consume_until(|c| c.is_ascii_graphic());
+        s
     }
+
+    #[inline(always)]
+    pub fn strn(&mut self, n: usize, insert_dummy: bool) -> Vec<char> {
+        let mut s = vec!['_'; n];
+        let mut st = 0;
+        if insert_dummy {
+            s.push('_');
+            st = 1;
+        }
+        for i in st..(st + n) {
+            s[i] = self.n();
+        }
+        s
+    }
+
     #[inline(always)]
     pub fn has_more(&mut self) -> bool {
         if self.current_index >= self.bytes_read {

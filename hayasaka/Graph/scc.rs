@@ -1,5 +1,12 @@
-// 1-based
-fn scc(n: usize, g: &Graph, g_rev: &Graph) -> Graph {
+type Graph = Vec<Vec<usize>>;
+struct SccResult {
+    pub num_sccs: usize,
+    pub scc_id: Vec<usize>,
+    pub scc_comps: Vec<Vec<usize>>,
+}
+
+fn scc(g: &Graph, g_rev: &Graph) -> SccResult {
+    let n = g.len();
     fn dfs1(u: usize, used: &mut [bool], g: &Graph, order: &mut Vec<usize>) {
         used[u] = true;
         for &v in &g[u] {
@@ -18,20 +25,16 @@ fn scc(n: usize, g: &Graph, g_rev: &Graph) -> Graph {
             }
         }
     }
-    let mut used = vec![false; n + 1];
+    let mut used = vec![false; n];
     let mut order = vec![];
-
     let mut res = vec![];
-
-    for i in 1..=n {
+    for i in 0..n {
         if !used[i] {
             dfs1(i, &mut used, g, &mut order);
         }
     }
-
-    let mut used = vec![false; n + 1];
+    let mut used = vec![false; n];
     order.reverse();
-
     for v in order {
         if !used[v] {
             let mut comps = vec![];
@@ -39,5 +42,16 @@ fn scc(n: usize, g: &Graph, g_rev: &Graph) -> Graph {
             res.push(comps);
         }
     }
-    res
+
+    let mut scc_id = vec![0; n];
+    for i in 0..res.len() {
+        for &j in &res[i] {
+            scc_id[j] = i;
+        }
+    }
+    SccResult {
+        num_sccs: res.len(),
+        scc_id,
+        scc_comps: res,
+    }
 }

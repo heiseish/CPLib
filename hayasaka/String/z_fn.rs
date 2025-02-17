@@ -18,3 +18,17 @@ fn buildz(n: usize, s: &[char], z: &mut [usize]) {
         }
     }
 }
+
+// n - size of string. string starts from 0th
+pub fn build_prefix(n: usize, s: &[char], pi: &mut [char]) {
+    for i in 1..n {
+        let mut j = pi[i - 1];
+        while j > 0 && s[i] != s[j] {
+            j = pi[j - 1];
+        }
+        if s[i] == s[j] {
+            j += 1;
+        }
+        pi[i] = j;
+    }
+}

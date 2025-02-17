@@ -1,6 +1,10 @@
 mod modular {
     use std::fmt;
+    use std::iter::Sum;
     use std::ops::*;
+
+    pub type mint1000000007 = MInt<1_000_000_007>;
+    pub type mint998244353 = MInt<998244353>;
 
     #[derive(Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct MInt<const MOD: i64>(i64);
@@ -62,6 +66,7 @@ mod modular {
     impl<const MOD: i64> MInt<MOD> {
         pub const ZERO: MInt<MOD> = MInt(0);
         pub const ONE: MInt<MOD> = MInt(1);
+        pub const INVALID: MInt<MOD> = MInt(i64::MAX / 4);
 
         pub const fn new(value: i64) -> Self {
             Self(value % MOD)
@@ -355,5 +360,31 @@ mod modular {
             val.0 as usize
         }
     }
+
+    impl<const MOD: i64> Sum<Self> for MInt<MOD> {
+        fn sum<I>(iter: I) -> Self
+        where
+            I: Iterator<Item = Self>,
+        {
+            iter.fold(MInt::<MOD>::ZERO, |a, b| a + b)
+        }
+    }
+
+    // let (fact, ifact) = mint::init_fact(200_005);
+    // let C = modular::choose_curry(&fact, &ifact);
+    pub fn choose_curry<'a, const MOD: i64>(
+        fact: &'a [MInt<MOD>],
+        ifact: &'a [MInt<MOD>],
+    ) -> impl Fn(i32, i32) -> MInt<MOD> + 'a {
+        |n: i32, c: i32| -> MInt<MOD> {
+            if n < 0 || c < 0 || n - c < 0 {
+                return MInt::<MOD>::ZERO;
+            }
+            let n = n as usize;
+            let c = c as usize;
+            fact[n] * ifact[c] * ifact[n - c]
+        }
+    }
 }
-pub type mint = modular::MInt<998244353>;
+pub type mint = modular::mint998244353;
+pub type mint = modular::mint1000000007;

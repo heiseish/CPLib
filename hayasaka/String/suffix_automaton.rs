@@ -1,6 +1,7 @@
 mod sa {
     use std::collections::BTreeMap;
 
+    // https://cp-algorithms.com/string/suffix-automaton.html#definition-of-a-suffix-automaton
     pub struct SuffixAutomaton {
         pub st: Vec<SAState>,
         pub sz: usize,

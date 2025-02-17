@@ -1,5 +1,5 @@
 mod trie {
-    const ALPHABET_SIZE: usize = 26;
+    const ALPHABET_SIZE: usize = 30;
 
     #[derive(Default, Copy, Clone)]
     pub struct TrieNode {
@@ -54,66 +54,82 @@ mod trie {
             ret
         }
     }
+}
 
-    type IntType = u32;
+mod trie {
+    type IntType = i64;
+
+    const ROOT: usize = 0;
 
     #[derive(Default, Clone)]
-    pub struct IntTrie {
-        l: usize,
-        c: usize,
-        node: Vec<[usize; 2]>,
-        cnt: Vec<usize>,
+    pub struct Node {
+        child: [usize; 2],
+        f: IntType,
     }
 
-    impl IntTrie {
+    #[derive(Default, Clone)]
+    pub struct BinaryTrie {
+        l: usize,
+        c: usize,
+        t: Vec<Node>,
+    }
+
+    impl BinaryTrie {
         pub fn new(n: usize) -> Self {
             let num_bits = std::mem::size_of::<IntType>() * 8;
             Self {
                 l: num_bits,
                 c: 1,
-                node: vec![[0, 0]; (num_bits + 2) * n + 3],
-                cnt: vec![0; (num_bits + 2) * n + 3],
+                t: vec![Node::default(); (num_bits + 2) * n + 3],
             }
         }
 
-        pub fn add(&mut self, x: IntType) {
-            let mut cur = 0;
+        pub fn add(&mut self, val: IntType, idx: IntType) {
+            let mut u = ROOT;
             for i in (0..self.l).rev() {
-                let has_bit = ((x >> i) & 1) as usize;
-                if self.node[cur][has_bit] == 0 {
-                    self.node[cur][has_bit] = self.c;
+                let x = ((val >> i) & 1) as usize;
+
+                if self.t[u].child[x] == 0 {
+                    self.t[u].child[x] = self.c;
                     self.c += 1;
                 }
-                cur = self.node[cur][has_bit];
-                self.cnt[cur] += 1;
+
+                u = self.t[u].child[x];
+                self.t[u].f = self.t[u].f.max(idx);
             }
         }
 
-        pub fn remove(&mut self, x: IntType) {
-            let mut cur = 0;
+        pub fn remove(&mut self, val: IntType) {
+            let mut u = 0;
             for i in (0..self.l).rev() {
-                let has_bit = ((x >> i) & 1) as usize;
-                if self.node[cur][has_bit] == 0 {
-                    self.node[cur][has_bit] = self.c;
+                let x = ((val >> i) & 1) as usize;
+
+                if self.t[u].child[x] == 0 {
+                    self.t[u].child[x] = self.c;
                     self.c += 1;
                 }
-                cur = self.node[cur][has_bit];
-                self.cnt[cur] -= 1;
+                u = self.t[u].child[x];
+                // self.cnt[u] -= 1;
             }
         }
-        pub fn find_max(&self, x: IntType) -> IntType {
-            let mut cur = 0;
+
+        pub fn get(&self, val: IntType, req: IntType) -> IntType {
+            let mut u = ROOT;
             let mut ans = 0;
             for i in (0..self.l).rev() {
-                let has_bit = ((x >> i) & 1) as usize;
-                if self.node[cur][has_bit ^ 1] > 0 && self.cnt[self.node[cur][has_bit ^ 1]] > 0 {
-                    ans += 1 << i;
-                    cur = self.node[cur][has_bit ^ 1];
-                } else {
-                    cur = self.node[cur][has_bit];
+                let x = ((val >> i) & 1) as usize;
+                let y = ((req >> i) & 1) as usize;
+
+                if y > 0 {
+                    ans = ans.max(self.t[self.t[u].child[x]].f);
+                }
+                u = self.t[u].child[x ^ y];
+                if u == ROOT {
+                    return ans;
                 }
             }
-            return ans;
+            ans.max(self.t[u].f)
         }
     }
 }
+use trie::*;
